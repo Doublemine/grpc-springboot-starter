@@ -19,7 +19,7 @@ class EnableGrpcServerCondition : Condition {
         val injectEnableAnnotation = context.beanFactory.getBeansWithAnnotation(
                 EnableGrpcServer::class.java).size
         return if (injectEnableAnnotation > 0) true else context.environment.getProperty(
-                "gRPC.enableServer", Boolean::class.java, false)
+                "g-rpc.enable-server", Boolean::class.java, false)
 
     }
 
