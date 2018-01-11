@@ -1,0 +1,61 @@
+buildscript {
+
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+        classpath 'com.google.protobuf:protobuf-gradle-plugin:0.8.3'
+
+    }
+}
+
+apply plugin: 'java'
+apply plugin: 'org.springframework.boot'
+apply plugin: 'com.google.protobuf'
+
+
+group = 'work.wanghao.kotlin.boot.grpc'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+protobuf {
+    protoc {
+        //noinspection GroovyAssignabilityCheck
+        artifact = "com.google.protobuf:protoc:3.5.1-1"
+    }
+    //noinspection GroovyAssignabilityCheck
+    plugins {
+        //noinspection GrUnresolvedAccess
+        grpc {
+            //noinspection GroovyAssignabilityCheck
+            artifact = "io.grpc:protoc-gen-grpc-java:${gRPCVersion}"
+        }
+    }
+    generateProtoTasks {
+        all()*.plugins {
+            grpc {}
+        }
+    }
+}
+
+// Inform IDEs like IntelliJ IDEA, Eclipse or NetBeans about the generated code.
+sourceSets {
+    main {
+        java {
+            srcDirs 'build/generated/source/proto/main/grpc'
+            srcDirs 'build/generated/source/proto/main/java'
+        }
+    }
+}
+
+dependencies {
+    compile('org.springframework.boot:spring-boot-starter')
+    testCompile('org.springframework.boot:spring-boot-starter-test')
+    compile 'org.springframework.boot:spring-boot-starter-web'
+    compile project(':starter')
+}
