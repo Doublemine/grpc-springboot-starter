@@ -3,14 +3,13 @@ package work.wanghao.kotlin.boot.grpc.sample.interceptor;
 import io.grpc.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
-import work.wanghao.kotlin.boot.grpc.annotation.GlobalInterceptor;
+import work.wanghao.kotlin.boot.grpc.annotation.GlobalServerInterceptor;
 
 /**
  * @author doublemine
  * Created on 2018/01/11 22:55.
  */
-@GlobalInterceptor
+@GlobalServerInterceptor
 public class LogInterceptor implements ServerInterceptor {
 
 

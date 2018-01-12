@@ -25,7 +25,7 @@ import work.wanghao.kotlin.boot.grpc.property.GrpcServerProperties
 @AutoConfigureOrder
 @ConditionalOnBean(annotation = [(GrpcService::class)])
 @EnableConfigurationProperties(GrpcServerProperties::class)
-open class GrpcAutoConfigure {
+open class GrpcServerAutoConfigure {
 
     @Autowired
     private lateinit var gRpcServerProperties: GrpcServerProperties

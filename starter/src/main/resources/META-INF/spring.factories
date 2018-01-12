@@ -1,2 +1,4 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-work.wanghao.kotlin.boot.grpc.configure.GrpcAutoConfigure
+work.wanghao.kotlin.boot.grpc.configure.GrpcServerAutoConfigure,\
+work.wanghao.kotlin.boot.grpc.configure.GrpcClientAutoConfigure
+

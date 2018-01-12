@@ -8,7 +8,7 @@ import org.springframework.beans.factory.DisposableBean
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.CommandLineRunner
 import org.springframework.context.support.AbstractApplicationContext
-import work.wanghao.kotlin.boot.grpc.annotation.GlobalInterceptor
+import work.wanghao.kotlin.boot.grpc.annotation.GlobalServerInterceptor
 import work.wanghao.kotlin.boot.grpc.annotation.GrpcService
 import work.wanghao.kotlin.boot.grpc.factory.GrpcServerFactory
 import java.util.stream.Collectors
@@ -40,7 +40,8 @@ open class GrpcServerRunner(factory: GrpcServerFactory, builder: ServerBuilder<*
 
         logger.info("initial gRPC Server...")
 
-        val globalInterceptors = ensureInjectType(GlobalInterceptor::class.java, ServerInterceptor::class.java)
+        val globalInterceptors = ensureInjectType(GlobalServerInterceptor::class.java,
+                ServerInterceptor::class.java)
                 .map { applicationContext.beanFactory.getBean(it, ServerInterceptor::class.java) }
                 .stream().collect(Collectors.toList())
 
@@ -59,7 +60,7 @@ open class GrpcServerRunner(factory: GrpcServerFactory, builder: ServerBuilder<*
                     val gRpcService = applicationContext.findAnnotationOnBean(it, GrpcService::class.java)
                     serverBuilder.addService(bindInterceptors(serviceDef, gRpcService, globalInterceptors))
                     healthStatusManager.setStatus(serviceDef.serviceDescriptor.name, HealthCheckResponse.ServingStatus.SERVING)
-                    logger.info("${bindableService::class.java.simpleName} service has been bind.")
+                    logger.info("${bindableService::class.java.name} service has been bind.")
                 }
 
         serverFactory.configure(serverBuilder)
