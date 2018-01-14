@@ -61,4 +61,4 @@ Step 2. Add the dependency
 
 
 ### Sample
-see the sample module
+see the [sample module](https://github.com/Doublemine/grpc-springboot-starter/tree/master/sample/src/main/java/work/wanghao/kotlin/boot/grpc/sample)
