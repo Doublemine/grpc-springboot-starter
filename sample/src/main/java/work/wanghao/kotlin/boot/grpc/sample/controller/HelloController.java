@@ -6,8 +6,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import work.wanghao.kotlin.boot.grpc.sample.service.GrpcClientService;
 
-import javax.annotation.Resource;
-
 /**
  * @author doublemine
  * Created on 2018/01/14 19:48.

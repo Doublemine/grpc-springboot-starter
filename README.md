@@ -2,7 +2,7 @@
 
 ### TODO
 
-- [ ] add client interceptor
+- [x] add client interceptor
 
 
 ### Usage
