@@ -1,12 +1,15 @@
 package work.wanghao.kotlin.boot.grpc.configure
 
 import org.springframework.boot.autoconfigure.AutoConfigureOrder
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Conditional
+import work.wanghao.kotlin.boot.grpc.annotation.EnableGrpcClient
 import work.wanghao.kotlin.boot.grpc.bootstrap.GrpcClientRunner
-import work.wanghao.kotlin.boot.grpc.condition.ScannerGrpcClientCondition
+import work.wanghao.kotlin.boot.grpc.condition.EnableGrpcClientCondition
 import work.wanghao.kotlin.boot.grpc.factory.DefaultGrpcClientFactory
 import work.wanghao.kotlin.boot.grpc.factory.GrpcClientFactory
 import work.wanghao.kotlin.boot.grpc.property.GrpcClientProperties
@@ -18,14 +21,14 @@ import work.wanghao.kotlin.boot.grpc.property.GrpcClientProperties
  *  Time: 10:29
  *  Description:
  **/
+
 @AutoConfigureOrder
-@Conditional(ScannerGrpcClientCondition::class)
+@ConditionalOnBean(annotation = [(EnableGrpcClient::class)])
 @EnableConfigurationProperties(GrpcClientProperties::class)
 class GrpcClientAutoConfigure {
 
 
     @Bean
-    @Conditional(ScannerGrpcClientCondition::class)
     fun gRpcClientRunner(properties: GrpcClientProperties): GrpcClientRunner {
         return GrpcClientRunner(properties)
     }

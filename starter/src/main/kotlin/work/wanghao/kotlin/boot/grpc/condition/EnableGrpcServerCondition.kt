@@ -23,7 +23,7 @@ class EnableGrpcServerCondition : Condition {
             0
         }
         return if (size > 0) true else context.environment.getProperty(
-                "g-rpc.enable-server", Boolean::class.java, false)
+                "grpc.enable-server", Boolean::class.java, false)
 
     }
 

@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Condition
 import org.springframework.context.annotation.ConditionContext
 import org.springframework.core.type.AnnotatedTypeMetadata
 import org.springframework.stereotype.Component
+import work.wanghao.kotlin.boot.grpc.annotation.EnableGrpcClient
 import work.wanghao.kotlin.boot.grpc.annotation.GrpcClientChannel
 import java.util.stream.Collectors
 import kotlin.reflect.KClass
@@ -16,18 +17,14 @@ import kotlin.reflect.KClass
  *  Time: 11:41
  *  Description:
  **/
-class ScannerGrpcClientCondition : Condition {
+class EnableGrpcClientCondition : Condition {
     override fun matches(context: ConditionContext, metadata: AnnotatedTypeMetadata): Boolean {
-
-
-        return context.beanFactory.beanDefinitionNames.map {
-            try {
-                context.beanFactory.getBean(it)
-            } catch (e: BeansException) {
-                null
-            }
-        }.filter { it != null }
-                .any { it!!.javaClass.declaredFields.any { it.isAnnotationPresent(GrpcClientChannel::class.java) } }
+        return try {
+            context.beanFactory.getBeansWithAnnotation(
+                    EnableGrpcClient::class.java).size
+        } catch (e: BeansException) {
+            0
+        } > 0
 
     }
 

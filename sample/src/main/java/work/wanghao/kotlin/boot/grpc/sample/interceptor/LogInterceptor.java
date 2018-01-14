@@ -3,7 +3,6 @@ package work.wanghao.kotlin.boot.grpc.sample.interceptor;
 import io.grpc.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
 import work.wanghao.kotlin.boot.grpc.annotation.GlobalServerInterceptor;
 
 /**

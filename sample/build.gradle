@@ -57,5 +57,7 @@ dependencies {
     compile('org.springframework.boot:spring-boot-starter')
     testCompile('org.springframework.boot:spring-boot-starter-test')
     compile 'org.springframework.boot:spring-boot-starter-web'
+//    compile "io.grpc:grpc-netty:${gRPCVersion}"
+//    compile "io.grpc:grpc-services:${gRPCVersion}"
     compile project(':starter')
 }

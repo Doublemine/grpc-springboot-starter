@@ -28,13 +28,13 @@ class DefaultGrpcClientFactory(properties: GrpcClientProperties) : GrpcClientFac
         val instanceProperty = propertiesList.client[name]!!
 
         val builder = ManagedChannelBuilder.forAddress(instanceProperty.host, instanceProperty.port)
-                .usePlaintext(instanceProperty.plaintext)
+                .usePlaintext(instanceProperty.plaintext).intercept(interceptors)
+
 
         if (instanceProperty.enableKeepAlive) {
             builder.keepAliveTime(instanceProperty.keepAliveTime, TimeUnit.SECONDS)
                     .keepAliveTimeout(instanceProperty.keepAliveTimeout, TimeUnit.SECONDS)
                     .keepAliveWithoutCalls(instanceProperty.keepAliveWithoutCalls)
-                    .intercept(interceptors)
         }
         return builder.build()
 

@@ -10,11 +10,9 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty
  *  Time: 10:47
  *  Description:
  **/
-@ConfigurationProperties("g-rpc")
+@ConfigurationProperties("grpc")
 data class GrpcClientProperties(
-        @NestedConfigurationProperty var client: Map<String, GrpcClientNodeProperties> = HashMap<String, GrpcClientNodeProperties>().apply {
-            put("defaultClient", GrpcClientNodeProperties())
-        })
+        @NestedConfigurationProperty var client: Map<String, GrpcClientNodeProperties> = HashMap<String, GrpcClientNodeProperties>().apply { put("defaultClient", GrpcClientNodeProperties()) })
 
 data class GrpcClientNodeProperties(var host: String = "localhost",
                                     var port: Int = 9494,

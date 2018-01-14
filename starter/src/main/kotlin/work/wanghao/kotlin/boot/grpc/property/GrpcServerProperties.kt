@@ -10,5 +10,5 @@ import org.springframework.boot.context.properties.ConfigurationProperties
  *  Description:
  **/
 
-@ConfigurationProperties("g-rpc")
+@ConfigurationProperties("grpc")
 data class GrpcServerProperties(var port: Int = 9494, var enableServer: Boolean = false)

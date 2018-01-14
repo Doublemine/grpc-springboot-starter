@@ -10,7 +10,6 @@ import work.wanghao.kotlin.boot.grpc.sample.HelloReply;
 import work.wanghao.kotlin.boot.grpc.sample.HelloRequest;
 
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
 
 /**
  * @author doublemine
