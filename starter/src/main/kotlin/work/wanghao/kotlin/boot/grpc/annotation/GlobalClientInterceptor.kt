@@ -5,12 +5,13 @@ import org.springframework.stereotype.Component
 /***
  *  Created with IntelliJ IDEA.
  *  @author :  xiamo
- *  Date:  2018-01-12
- *  Time: 11:38
+ *  Date:  2018-01-11
+ *  Time: 15:03
  *  Description:
  **/
+
 @MustBeDocumented
-@Target(allowedTargets = [(AnnotationTarget.CLASS)])
+@Target(AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.RUNTIME)
 @Component
-annotation class GrpcClient
+annotation class GlobalClientInterceptor

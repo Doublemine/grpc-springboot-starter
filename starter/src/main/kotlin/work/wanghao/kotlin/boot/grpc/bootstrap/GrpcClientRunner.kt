@@ -2,16 +2,15 @@ package work.wanghao.kotlin.boot.grpc.bootstrap
 
 import io.grpc.ClientInterceptor
 import org.slf4j.LoggerFactory
-import org.springframework.beans.factory.DisposableBean
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.beans.factory.config.BeanDefinition
 import org.springframework.boot.CommandLineRunner
-import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider
 import org.springframework.context.support.AbstractApplicationContext
+import org.springframework.util.ReflectionUtils
+import work.wanghao.kotlin.boot.grpc.annotation.GlobalClientInterceptor
 import work.wanghao.kotlin.boot.grpc.annotation.GrpcClientChannel
-import work.wanghao.kotlin.boot.grpc.condition.GrpcChannelScan
+import work.wanghao.kotlin.boot.grpc.factory.GrpcClientFactory
 import work.wanghao.kotlin.boot.grpc.property.GrpcClientProperties
-import java.util.stream.Collectors
+import java.lang.reflect.Field
 import kotlin.reflect.KClass
 
 /***
@@ -21,7 +20,7 @@ import kotlin.reflect.KClass
  *  Time: 11:21
  *  Description:
  **/
-class GrpcClientRunner(properties: GrpcClientProperties) : CommandLineRunner, DisposableBean {
+class GrpcClientRunner(properties: GrpcClientProperties) : CommandLineRunner {
     private val logger = LoggerFactory.getLogger(GrpcClientRunner::class.java)
 
     private val nodeProperties = properties
@@ -29,78 +28,59 @@ class GrpcClientRunner(properties: GrpcClientProperties) : CommandLineRunner, Di
     @Autowired
     private lateinit var appContext: AbstractApplicationContext
 
+    @Autowired
+    private lateinit var factory: GrpcClientFactory
+
     override fun run(vararg args: String?) {
-        logger.info("gogogo")
+        logger.info("initial gRPC Client...")
 
-        /*find inject scan annotation value*/
-        val obj = appContext.beanFactory.getBeansWithAnnotation(GrpcChannelScan::class.java)
-                .entries.stream().findFirst().get().value
+        /*find global interceptors*/
+        val globalInterceptors = appContext.ensureInjectType(GlobalClientInterceptor::class.java,
+                ClientInterceptor::class.java)
+                .map { appContext.beanFactory.getBean(it, ClientInterceptor::class.java) }.toMutableList()
 
-        val annotationValue = obj.javaClass.getDeclaredAnnotation(GrpcChannelScan::class.java)
 
-        if (annotationValue.basePackage.java.name == GrpcChannelScan::class.java.name && annotationValue.basePackagePath.isEmpty()) {
-            logger.error("Must Specified scan path.")
-            return
+        appContext.beanFactory.beanDefinitionNames.map {
+            appContext.beanFactory.getBean(it)
+        }.filter {
+            it.javaClass.declaredFields.any { it.isAnnotationPresent(GrpcClientChannel::class.java) }
+        }.forEach { beanInstance ->
+            beanInstance.javaClass.declaredFields.filter { it.getDeclaredAnnotation(GrpcClientChannel::class.java) != null }
+                    .map {
+                        GrpcChannel {
+                            field = it
+                            name = it.getDeclaredAnnotation(GrpcClientChannel::class.java).value
+                            interceptors = it.getDeclaredAnnotation(GrpcClientChannel::class.java)
+                                    .interceptors.toList()
+                        }
+                    }.distinct()
+                    .filter {
+                        nodeProperties.client.containsKey(it.name)
+                    }.forEach {
+                ReflectionUtils.makeAccessible(it.field)
+                ReflectionUtils.setField(it.field, beanInstance, factory.createChannel(it.name, it.interceptors.map {
+                    if (appContext.getBeanNamesForType(it.java).isNotEmpty()) appContext.getBean(it.java) else it.java.newInstance()
+                }.plus(globalInterceptors).distinct()))
+                if (logger.isDebugEnabled)
+                    logger.info("Success registered channel name:${it.name} for target: ${beanInstance.javaClass.name} --> ${it.field!!.name}")
+            }
+
+
         }
 
-        val scanPath = if (annotationValue.basePackage.java.name != GrpcChannelScan::class.java.name) {
-            annotationValue.basePackage.java.`package`.name
-        } else {
-            annotationValue.basePackagePath
-        }
-
-        val scan = ClassPathScanningCandidateComponentProvider(false)
-        scan.addIncludeFilter({ metadataReader, _ ->
-            filterByAnnotation(metadataReader.classMetadata.className, GrpcClientChannel::class)
-        })
-        val beanDef = scan.findCandidateComponents(scanPath)
-
-        build(beanDef)
-
     }
 
-    override fun destroy() {
 
-    }
+}
 
-    private fun build(set: Set<BeanDefinition>) {
+class GrpcChannel {
+    var field: Field? = null
+    var name: String = ""
+    var interceptors: List<KClass<out ClientInterceptor>> = ArrayList()
+}
 
-        val dd = set.map {
-            val map = appContext.classLoader.loadClass(it.beanClassName).declaredFields.filter {
-                it.isAnnotationPresent(GrpcClientChannel::class.java)
-            }.filter {
-                val annotation = it.getDeclaredAnnotation(GrpcClientChannel::class.java)
-                annotation != null
-            }.map {
-
-                val map = LinkedHashMap<String, Array<KClass<out ClientInterceptor>>>()
-                map.put(it.getDeclaredAnnotation(GrpcClientChannel::class.java)
-                        .value, it.getDeclaredAnnotation(GrpcClientChannel::class.java)
-                        .interceptors)
-                map
-
-            }.distinctBy { it }
-            map
-        }
-
-
-        set.map { appContext.classLoader.loadClass(it.beanClassName).declaredFields }
-                .flatMap { it.asIterable() }
-                .filter { it.isAnnotationPresent(GrpcClientChannel::class.java) }
-                .filter { it.getDeclaredAnnotation(GrpcClientChannel::class.java) != null }
-                .map {
-                    val map = LinkedHashMap<String, Array<KClass<out ClientInterceptor>>>()
-                    map.put(it.getDeclaredAnnotation(GrpcClientChannel::class.java)
-                            .value, it.getDeclaredAnnotation(GrpcClientChannel::class.java)
-                            .interceptors)
-                    map
-                }.distinct()
-
-    }
-
-    private fun filterByAnnotation(className: String, annotation: KClass<out Annotation>): Boolean {
-        return appContext.classLoader.loadClass(
-                className).declaredFields.any { it.isAnnotationPresent(annotation.java) }
-    }
-
+inline fun GrpcChannel(channel: GrpcChannel.() -> Unit): GrpcChannel {
+    val result = GrpcChannel()
+    channel(result)
+    return result
 }

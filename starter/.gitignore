@@ -1,5 +1,5 @@
 .gradle
-/build/
+/filterGeneratorProperties/
 !gradle/wrapper/gradle-wrapper.jar
 
 ### STS ###
@@ -18,7 +18,7 @@
 
 ### NetBeans ###
 nbproject/private/
-build/
+filterGeneratorProperties/
 nbbuild/
 dist/
 nbdist/

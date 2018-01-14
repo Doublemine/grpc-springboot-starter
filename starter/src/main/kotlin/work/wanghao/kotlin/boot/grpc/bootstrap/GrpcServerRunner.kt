@@ -4,6 +4,7 @@ import io.grpc.*
 import io.grpc.health.v1.HealthCheckResponse
 import io.grpc.services.HealthStatusManager
 import org.slf4j.LoggerFactory
+import org.springframework.beans.BeansException
 import org.springframework.beans.factory.DisposableBean
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.CommandLineRunner
@@ -40,7 +41,7 @@ open class GrpcServerRunner(factory: GrpcServerFactory, builder: ServerBuilder<*
 
         logger.info("initial gRPC Server...")
 
-        val globalInterceptors = ensureInjectType(GlobalServerInterceptor::class.java,
+        val globalInterceptors = applicationContext.ensureInjectType(GlobalServerInterceptor::class.java,
                 ServerInterceptor::class.java)
                 .map { applicationContext.beanFactory.getBean(it, ServerInterceptor::class.java) }
                 .stream().collect(Collectors.toList())
@@ -48,12 +49,12 @@ open class GrpcServerRunner(factory: GrpcServerFactory, builder: ServerBuilder<*
         /*add health check service*/
         serverBuilder.addService(healthStatusManager.healthService)
 
-        if (ensureInjectType(GrpcService::class.java, BindableService::class.java).count() <= 0 && logger.isInfoEnabled) {
+        if (applicationContext.ensureInjectType(GrpcService::class.java, BindableService::class.java).count() <= 0 && logger.isInfoEnabled) {
             logger.info("not found GrpcService component!")
         }
 
         /*bind interceptor and add healthStatus*/
-        ensureInjectType(GrpcService::class.java, BindableService::class.java)
+        applicationContext.ensureInjectType(GrpcService::class.java, BindableService::class.java)
                 .forEach {
                     val bindableService = applicationContext.beanFactory.getBean(it, BindableService::class.java)
                     val serviceDef = bindableService.bindService()
@@ -66,7 +67,7 @@ open class GrpcServerRunner(factory: GrpcServerFactory, builder: ServerBuilder<*
         serverFactory.configure(serverBuilder)
         server = serverBuilder.build().start()
 
-        logger.info("gRPC started on port(s): ${server.port} (tcp)")
+        logger.info("gRPC Server started on port(s): ${server.port} (tcp)")
 
         await4Stop()
 
@@ -83,20 +84,10 @@ open class GrpcServerRunner(factory: GrpcServerFactory, builder: ServerBuilder<*
     private fun await4Stop() {
         Thread({
             this.server.awaitTermination()
-        }).apply { isDaemon = false }.start()
+        }).apply {
+            isDaemon = false
+        }.start()
 
-    }
-
-
-    /**
-     * ensure annotation inject the target type
-     */
-    private fun <T> ensureInjectType(annotationType: Class<out Annotation>, ensureType: Class<T>): List<String> {
-        val matchAnnotationMap = applicationContext.getBeansWithAnnotation(annotationType)
-        return applicationContext.getBeanNamesForType(ensureType)
-                .filter {
-                    if (!matchAnnotationMap.isEmpty()) matchAnnotationMap.contains(it) else false
-                }
     }
 
 
@@ -116,4 +107,20 @@ open class GrpcServerRunner(factory: GrpcServerFactory, builder: ServerBuilder<*
     }
 
 
+}
+
+/**
+ * ensure annotation inject the target type
+ */
+fun <T> AbstractApplicationContext.ensureInjectType(annotationType: Class<out Annotation>, ensureType: Class<T>): List<String> {
+    val matchAnnotationMap =
+            try {
+                getBeansWithAnnotation(annotationType)
+            } catch (e: BeansException) {
+                emptyMap<String, Any>()
+            }
+    return getBeanNamesForType(ensureType)
+            .filter {
+                if (!matchAnnotationMap.isEmpty()) matchAnnotationMap.contains(it) else false
+            }
 }

@@ -12,14 +12,14 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty
  **/
 @ConfigurationProperties("g-rpc")
 data class GrpcClientProperties(
-        @NestedConfigurationProperty val client: Map<String, GrpcClientNodeProperties> = HashMap<String, GrpcClientNodeProperties>().apply {
+        @NestedConfigurationProperty var client: Map<String, GrpcClientNodeProperties> = HashMap<String, GrpcClientNodeProperties>().apply {
             put("defaultClient", GrpcClientNodeProperties())
         })
 
-data class GrpcClientNodeProperties(val host: String = "localhost",
-        val port: Int = 9494,
-        val plaintext: Boolean = true,
-        val enableKeepAlive: Boolean = false,
-        val keepAliveWithoutCalls: Boolean = false,
-        val keepAliveTime: Long = 180, val keepAliveTimeout: Long = 40)
+data class GrpcClientNodeProperties(var host: String = "localhost",
+                                    var port: Int = 9494,
+                                    var plaintext: Boolean = true,
+                                    var enableKeepAlive: Boolean = false,
+                                    var keepAliveWithoutCalls: Boolean = false,
+                                    var keepAliveTime: Long = 180, var keepAliveTimeout: Long = 40)
 

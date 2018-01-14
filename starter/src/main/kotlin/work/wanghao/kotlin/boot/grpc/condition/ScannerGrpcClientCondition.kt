@@ -19,34 +19,17 @@ import kotlin.reflect.KClass
 class ScannerGrpcClientCondition : Condition {
     override fun matches(context: ConditionContext, metadata: AnnotatedTypeMetadata): Boolean {
 
-        val map = try {
-            context.beanFactory.getBeansWithAnnotation(GrpcChannelScan::class.java)
-        } catch (e: BeansException) {
-            HashMap<String, Any>()
-        }
 
-        if (map.isEmpty()) {
-            return false
-        }
-
-        return map.filter {
-            checkAnnotationInject(it.value.javaClass)
-        }.isNotEmpty()
-
-    }
-
-    private fun checkAnnotationInject(clazz: Class<*>): Boolean {
-        return clazz.declaredFields.filter {
-            it.isAnnotationPresent(GrpcClientChannel::class.java)
-        }.stream().collect(Collectors.toList()).isNotEmpty()
+        return context.beanFactory.beanDefinitionNames.map {
+            try {
+                context.beanFactory.getBean(it)
+            } catch (e: BeansException) {
+                null
+            }
+        }.filter { it != null }
+                .any { it!!.javaClass.declaredFields.any { it.isAnnotationPresent(GrpcClientChannel::class.java) } }
 
     }
 
 }
 
-@MustBeDocumented
-@Target(allowedTargets = [(AnnotationTarget.CLASS)])
-@Retention
-@Component
-annotation class GrpcChannelScan(val basePackage: KClass<*> = GrpcChannelScan::class,
-        val basePackagePath: String = "")

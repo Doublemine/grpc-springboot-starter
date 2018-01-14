@@ -46,7 +46,8 @@ dependencies {
     compile "io.grpc:grpc-netty:${gRPCVersion}"
     compile "io.grpc:grpc-services:${gRPCVersion}"
 
-    kapt "org.springframework.boot:spring-boot-configuration-processor:${springBootVersion}"
+//    kapt "org.springframework.boot:spring-boot-configuration-processor:${springBootVersion}"
+    compileOnly("org.springframework.boot:spring-boot-configuration-processor:${springBootVersion}")
 
 }
 

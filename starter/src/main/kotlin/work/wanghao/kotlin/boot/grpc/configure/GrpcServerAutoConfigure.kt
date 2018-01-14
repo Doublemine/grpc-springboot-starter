@@ -9,9 +9,9 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Conditional
-import work.wanghao.kotlin.boot.grpc.condition.EnableGrpcServerCondition
 import work.wanghao.kotlin.boot.grpc.annotation.GrpcService
 import work.wanghao.kotlin.boot.grpc.bootstrap.GrpcServerRunner
+import work.wanghao.kotlin.boot.grpc.condition.EnableGrpcServerCondition
 import work.wanghao.kotlin.boot.grpc.factory.GrpcServerFactory
 import work.wanghao.kotlin.boot.grpc.property.GrpcServerProperties
 
