@@ -21,6 +21,8 @@ sourceCompatibility = 1.8
 
 repositories {
     mavenCentral()
+    maven { url 'https://jitpack.io' }
+
 }
 
 protobuf {
@@ -57,7 +59,7 @@ dependencies {
     compile('org.springframework.boot:spring-boot-starter')
     testCompile('org.springframework.boot:spring-boot-starter-test')
     compile 'org.springframework.boot:spring-boot-starter-web'
-//    compile "io.grpc:grpc-netty:${gRPCVersion}"
-//    compile "io.grpc:grpc-services:${gRPCVersion}"
-    compile project(':starter')
+    compile 'com.github.Doublemine.grpc-springboot-starter:starter:1.0'
+
+//    compile project(':starter')
 }
