@@ -1,7 +1,6 @@
 package work.wanghao.kotlin.boot.grpc.sample.service;
 
 import io.grpc.Channel;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import work.wanghao.kotlin.boot.grpc.annotation.GrpcClientChannel;
 import work.wanghao.kotlin.boot.grpc.sample.GreeterGrpc;
@@ -16,12 +15,13 @@ import work.wanghao.kotlin.boot.grpc.sample.HelloRequest;
 @Service
 public class GrpcClientService {
 
-    @GrpcClientChannel()
-    private Channel channel;
+	@GrpcClientChannel("test")
+	private Channel channel;
 
-    public String sendMessage(String name) {
-        GreeterGrpc.GreeterBlockingStub stub = GreeterGrpc.newBlockingStub(channel);
-        HelloReply response = stub.sayHello(HelloRequest.newBuilder().setName(name).build());
-        return response.getMessage();
-    }
+	public String sendMessage(String name) {
+
+		GreeterGrpc.GreeterBlockingStub stub = GreeterGrpc.newBlockingStub(channel);
+		HelloReply response = stub.sayHello(HelloRequest.newBuilder().setName(name).build());
+		return response.getMessage();
+	}
 }

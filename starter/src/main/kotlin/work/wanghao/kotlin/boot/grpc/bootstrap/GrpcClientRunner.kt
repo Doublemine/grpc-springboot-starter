@@ -37,39 +37,54 @@ class GrpcClientRunner(properties: GrpcClientProperties) : CommandLineRunner {
         /*find global interceptors*/
         val globalInterceptors = appContext.ensureInjectType(GlobalInterceptor::class.java,
                 ClientInterceptor::class.java)
-                .map { appContext.beanFactory.getBean(it, ClientInterceptor::class.java) }.toMutableList()
+                .map {
+                    appContext.beanFactory.getBean(it, ClientInterceptor::class.java)
+                }.toMutableList()
 
 
         appContext.beanFactory.beanDefinitionNames.map {
             appContext.beanFactory.getBean(it)
         }.filter {
-            it.javaClass.declaredFields.any { it.isAnnotationPresent(GrpcClientChannel::class.java) }
+            it.javaClass.declaredFields.any {
+                it.isAnnotationPresent(GrpcClientChannel::class.java)
+            }
         }.forEach { beanInstance ->
-            beanInstance.javaClass.declaredFields.filter { it.getDeclaredAnnotation(GrpcClientChannel::class.java) != null }
+            beanInstance.javaClass.declaredFields.filter {
+                it.getDeclaredAnnotation(GrpcClientChannel::class.java) != null
+            }
                     .map {
                         GrpcChannel {
                             field = it
                             name = it.getDeclaredAnnotation(GrpcClientChannel::class.java).value
                             interceptors = it.getDeclaredAnnotation(GrpcClientChannel::class.java)
                                     .interceptors.toList()
+                            globalInterceptor = it.getDeclaredAnnotation(
+                                    GrpcClientChannel::class.java).applyGlobalInterceptor
                         }
                     }.distinct()
                     .filter {
                         nodeProperties.client.containsKey(it.name)
                     }.forEach {
                 ReflectionUtils.makeAccessible(it.field)
-                ReflectionUtils.setField(it.field, beanInstance, factory.createChannel(it.name, it.interceptors.map {
-                    if (appContext.getBeanNamesForType(it.java).isNotEmpty()) appContext.getBean(it.java) else it.java.newInstance()
-                }.plus(globalInterceptors).distinct()))
+                ReflectionUtils.setField(it.field, beanInstance,
+                        factory.createChannel(it.name,
+                                if (it.globalInterceptor) it.interceptors.map {
+                                    if (appContext.getBeanNamesForType(
+                                            it.java).isNotEmpty()) appContext.getBean(
+                                            it.java) else it.java.newInstance()
+                                }.plus(globalInterceptors).distinct() else it.interceptors.map {
+                                    if (appContext.getBeanNamesForType(
+                                            it.java).isNotEmpty()) appContext.getBean(
+                                            it.java) else it.java.newInstance()
+                                }))
                 if (logger.isDebugEnabled)
-                    logger.info("Success registered channel name:${it.name} for target: ${beanInstance.javaClass.name} --> ${it.field!!.name}")
+                    logger.info(
+                            "Success registered channel name:${it.name} for target: ${beanInstance.javaClass.name} --> ${it.field!!.name}")
             }
-
 
         }
 
     }
-
 
 }
 
@@ -77,6 +92,7 @@ class GrpcChannel {
     var field: Field? = null
     var name: String = ""
     var interceptors: List<KClass<out ClientInterceptor>> = ArrayList()
+    var globalInterceptor = false
 }
 
 inline fun GrpcChannel(channel: GrpcChannel.() -> Unit): GrpcChannel {

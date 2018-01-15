@@ -15,4 +15,5 @@ import kotlin.reflect.KClass
 @Target(AnnotationTarget.FIELD)
 @Retention
 annotation class GrpcClientChannel(val value: String = "defaultClient",
-        val interceptors: Array<KClass<out ClientInterceptor>> = [])
+        val interceptors: Array<KClass<out ClientInterceptor>> = [],
+        val applyGlobalInterceptor: Boolean = false)
