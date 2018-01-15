@@ -5,6 +5,7 @@ import work.wanghao.kotlin.boot.grpc.annotation.GrpcService;
 import work.wanghao.kotlin.boot.grpc.sample.GreeterGrpc;
 import work.wanghao.kotlin.boot.grpc.sample.HelloReply;
 import work.wanghao.kotlin.boot.grpc.sample.HelloRequest;
+import work.wanghao.kotlin.boot.grpc.sample.interceptor.ServerLogInterceptor;
 
 /**
  * @author doublemine
@@ -13,11 +14,10 @@ import work.wanghao.kotlin.boot.grpc.sample.HelloRequest;
 @GrpcService(applyGlobalInterceptor = true)
 public class HelloService extends GreeterGrpc.GreeterImplBase {
 
-
-    @Override
-    public void sayHello(HelloRequest request, StreamObserver<HelloReply> responseObserver) {
-        HelloReply reply = HelloReply.newBuilder().setMessage("Hello " + request.getName()).build();
-        responseObserver.onNext(reply);
-        responseObserver.onCompleted();
-    }
+	@Override
+	public void sayHello(HelloRequest request, StreamObserver<HelloReply> responseObserver) {
+		HelloReply reply = HelloReply.newBuilder().setMessage("Hello " + request.getName()).build();
+		responseObserver.onNext(reply);
+		responseObserver.onCompleted();
+	}
 }

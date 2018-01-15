@@ -9,7 +9,7 @@ import org.springframework.beans.factory.DisposableBean
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.CommandLineRunner
 import org.springframework.context.support.AbstractApplicationContext
-import work.wanghao.kotlin.boot.grpc.annotation.GlobalServerInterceptor
+import work.wanghao.kotlin.boot.grpc.annotation.GlobalInterceptor
 import work.wanghao.kotlin.boot.grpc.annotation.GrpcService
 import work.wanghao.kotlin.boot.grpc.factory.GrpcServerFactory
 import java.util.stream.Collectors
@@ -41,7 +41,7 @@ open class GrpcServerRunner(factory: GrpcServerFactory, builder: ServerBuilder<*
 
         logger.info("initial gRPC Server...")
 
-        val globalInterceptors = applicationContext.ensureInjectType(GlobalServerInterceptor::class.java,
+        val globalInterceptors = applicationContext.ensureInjectType(GlobalInterceptor::class.java,
                 ServerInterceptor::class.java)
                 .map { applicationContext.beanFactory.getBean(it, ServerInterceptor::class.java) }
                 .stream().collect(Collectors.toList())

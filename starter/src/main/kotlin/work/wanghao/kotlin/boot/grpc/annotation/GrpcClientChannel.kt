@@ -1,7 +1,6 @@
 package work.wanghao.kotlin.boot.grpc.annotation
 
 import io.grpc.ClientInterceptor
-import org.springframework.beans.factory.annotation.Autowired
 import kotlin.reflect.KClass
 
 /***

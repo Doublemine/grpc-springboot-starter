@@ -9,11 +9,10 @@ package work.wanghao.kotlin.boot.grpc.annotation
  **/
 @MustBeDocumented
 @Target(allowedTargets = [(AnnotationTarget.CLASS)])
-@Retention(AnnotationRetention.RUNTIME)
+@Retention
 annotation class EnableGrpcServer
-
 
 @MustBeDocumented
 @Target(allowedTargets = [(AnnotationTarget.CLASS)])
-@Retention(AnnotationRetention.RUNTIME)
+@Retention
 annotation class EnableGrpcClient

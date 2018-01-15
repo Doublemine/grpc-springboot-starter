@@ -3,14 +3,14 @@ package work.wanghao.kotlin.boot.grpc.sample.interceptor;
 import io.grpc.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import work.wanghao.kotlin.boot.grpc.annotation.GlobalClientInterceptor;
+import work.wanghao.kotlin.boot.grpc.annotation.GlobalInterceptor;
 
 /**
  * @author doublemine
  * Created on 2018/01/14 19:46.
  */
 
-@GlobalClientInterceptor
+@GlobalInterceptor
 public class ClientLogInterceptor implements ClientInterceptor {
     private static final Logger log = LoggerFactory.getLogger(ClientLogInterceptor.class);
 

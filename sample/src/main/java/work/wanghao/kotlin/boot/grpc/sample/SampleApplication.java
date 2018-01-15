@@ -7,7 +7,7 @@ import work.wanghao.kotlin.boot.grpc.annotation.EnableGrpcServer;
 
 @SpringBootApplication
 @EnableGrpcServer
-//@EnableGrpcClient
+@EnableGrpcClient
 public class SampleApplication {
 
     public static void main(String[] args) {

@@ -23,7 +23,7 @@ import work.wanghao.kotlin.boot.grpc.property.GrpcServerProperties
  **/
 @AutoConfigureOrder
 @ConditionalOnBean(annotation = [(EnableGrpcServer::class)])
-@ConditionalOnProperty(name = ["grpc.enable-server"], havingValue = "true", matchIfMissing = true)
+@ConditionalOnProperty(name = ["grpc.server.enable"], havingValue = "true", matchIfMissing = true)
 @EnableConfigurationProperties(GrpcServerProperties::class)
 open class GrpcServerAutoConfigure {
 

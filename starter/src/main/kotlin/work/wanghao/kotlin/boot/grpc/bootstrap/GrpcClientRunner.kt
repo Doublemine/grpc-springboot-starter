@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.CommandLineRunner
 import org.springframework.context.support.AbstractApplicationContext
 import org.springframework.util.ReflectionUtils
-import work.wanghao.kotlin.boot.grpc.annotation.GlobalClientInterceptor
+import work.wanghao.kotlin.boot.grpc.annotation.GlobalInterceptor
 import work.wanghao.kotlin.boot.grpc.annotation.GrpcClientChannel
 import work.wanghao.kotlin.boot.grpc.factory.GrpcClientFactory
 import work.wanghao.kotlin.boot.grpc.property.GrpcClientProperties
@@ -35,7 +35,7 @@ class GrpcClientRunner(properties: GrpcClientProperties) : CommandLineRunner {
         logger.info("initial gRPC Client...")
 
         /*find global interceptors*/
-        val globalInterceptors = appContext.ensureInjectType(GlobalClientInterceptor::class.java,
+        val globalInterceptors = appContext.ensureInjectType(GlobalInterceptor::class.java,
                 ClientInterceptor::class.java)
                 .map { appContext.beanFactory.getBean(it, ClientInterceptor::class.java) }.toMutableList()
 

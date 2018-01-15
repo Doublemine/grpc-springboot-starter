@@ -2,14 +2,12 @@ package work.wanghao.kotlin.boot.grpc.configure
 
 import org.springframework.boot.autoconfigure.AutoConfigureOrder
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean
-import org.springframework.boot.autoconfigure.condition.ConditionalOnClass
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean
-import org.springframework.context.annotation.Conditional
 import work.wanghao.kotlin.boot.grpc.annotation.EnableGrpcClient
 import work.wanghao.kotlin.boot.grpc.bootstrap.GrpcClientRunner
-import work.wanghao.kotlin.boot.grpc.condition.EnableGrpcClientCondition
 import work.wanghao.kotlin.boot.grpc.factory.DefaultGrpcClientFactory
 import work.wanghao.kotlin.boot.grpc.factory.GrpcClientFactory
 import work.wanghao.kotlin.boot.grpc.property.GrpcClientProperties
@@ -24,6 +22,7 @@ import work.wanghao.kotlin.boot.grpc.property.GrpcClientProperties
 
 @AutoConfigureOrder
 @ConditionalOnBean(annotation = [(EnableGrpcClient::class)])
+@ConditionalOnProperty(name = ["grpc.client.enable"], havingValue = "true", matchIfMissing = true)
 @EnableConfigurationProperties(GrpcClientProperties::class)
 class GrpcClientAutoConfigure {
 
