@@ -59,7 +59,7 @@ dependencies {
     compile('org.springframework.boot:spring-boot-starter')
     testCompile('org.springframework.boot:spring-boot-starter-test')
     compile 'org.springframework.boot:spring-boot-starter-web'
-    compile 'com.github.Doublemine.grpc-springboot-starter:starter:1.0.1'
+//    compile 'com.github.Doublemine.grpc-springboot-starter:starter:1.0.1'
 
-//    compile project(':starter')
+    compile project(':starter')
 }

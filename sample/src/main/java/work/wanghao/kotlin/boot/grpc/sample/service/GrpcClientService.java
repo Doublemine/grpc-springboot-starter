@@ -15,7 +15,7 @@ import work.wanghao.kotlin.boot.grpc.sample.HelloRequest;
 @Service
 public class GrpcClientService {
 
-	@GrpcClientChannel("test")
+	@GrpcClientChannel(value = "test", applyGlobalInterceptor = true)
 	private Channel channel;
 
 	public String sendMessage(String name) {
