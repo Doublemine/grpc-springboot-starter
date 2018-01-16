@@ -1,4 +1,4 @@
-### gRPC SpringBoot Starter [![](https://jitpack.io/v/Doublemine/grpc-springboot-starter.svg)](https://jitpack.io/#Doublemine/grpc-springboot-starter)
+### gRPC Spring Boot Starter [![](https://jitpack.io/v/Doublemine/grpc-springboot-starter.svg)](https://jitpack.io/#Doublemine/grpc-springboot-starter)[![Build Status](https://travis-ci.org/Doublemine/grpc-springboot-starter.svg?branch=master)](https://travis-ci.org/Doublemine/grpc-springboot-starter)
 
 
 ### TODO
